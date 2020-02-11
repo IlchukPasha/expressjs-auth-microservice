@@ -1,0 +1,26 @@
+# https://github.com/khezen/compose-postgres
+version: '2'
+services:
+  postgres:
+    image: postgres:12.1
+    restart: always
+    container_name: lib-api-auth-microservice.postgres
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: library
+      POSTGRES_USER: library
+      POSTGRES_PASSWORD: library
+    # https://stackoverflow.com/questions/41637505/how-to-persist-data-in-a-dockerized-postgres-database-using-volumes
+    # volumes:
+    #   - postgres-data:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: lib-api-auth-microservice.pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 3309:80
+  # add node container
