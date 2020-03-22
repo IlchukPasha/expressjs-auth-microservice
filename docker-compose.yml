@@ -1,8 +1,8 @@
 # https://github.com/khezen/compose-postgres
 version: '2'
-services:
+services:  
   postgres:
-    image: postgres:12.1
+    image: postgres:12.2
     restart: always
     container_name: social-network-auth-microservice.postgres
     ports:
@@ -12,14 +12,10 @@ services:
       POSTGRES_USER: social_network
       POSTGRES_PASSWORD: social_network
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
   pgadmin:
     image: dpage/pgadmin4
-    links:
-      - postgres
-    depends_on:
-      - postgres
-    restart: always
+    restart: unless-stopped
     container_name: social-network-auth-microservice.pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
@@ -36,3 +32,5 @@ services:
       - .:/app
     environment:
       - NODE_ENV=development
+volumes:
+  postgres-data:
