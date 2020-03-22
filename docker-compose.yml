@@ -4,23 +4,35 @@ services:
   postgres:
     image: postgres:12.1
     restart: always
-    container_name: lib-api-auth-microservice.postgres
+    container_name: social-network-auth-microservice.postgres
     ports:
       - 5433:5432
     environment:
-      POSTGRES_DB: library
-      POSTGRES_USER: library
-      POSTGRES_PASSWORD: library
-    # https://stackoverflow.com/questions/41637505/how-to-persist-data-in-a-dockerized-postgres-database-using-volumes
-    # volumes:
-    #   - postgres-data:/var/lib/postgresql/data
+      POSTGRES_DB: social_network
+      POSTGRES_USER: social_network
+      POSTGRES_PASSWORD: social_network
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
   pgadmin:
     image: dpage/pgadmin4
+    links:
+      - postgres
+    depends_on:
+      - postgres
     restart: always
-    container_name: lib-api-auth-microservice.pgadmin
+    container_name: social-network-auth-microservice.pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - 3309:80
-  # add node container
+  node:
+    build: .
+    command: /app/node_modules/.bin/nodemon ./server.js
+    container_name: social-network-auth-microservice.node
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
