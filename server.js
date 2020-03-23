@@ -6,6 +6,8 @@ const routes = require('./routes');
 const errorHandler = require('./core/errorHandler');
 const routeNotFoundHandler = require('./core/routeNotFoundHandler');
 
+require('./core/db');
+
 const app = express();
 app.use(bodyParser.json());
 
