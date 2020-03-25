@@ -1,14 +1,21 @@
-const HttpError = require('./../core/errors/httpError');
+const { pick } = require('lodash');
 
-const { User } = require('./../models');
+const { UserService } = require('./../services');
+
 
 const signup = async (req, res, next) => {
-  const { email, password } = req.body;
+  // TODO add validation
+  const reqUser = pick(req.body, ['email', 'password', 'firstName', 'lastName']);
 
-  await User.query().limit(3);
+  let user;
 
-  next(new HttpError('not found--', 404));
-  // res.json({ message: 'Hello' });
+  try {
+    user = await UserService.signup(reqUser);
+  } catch (error) {
+    return next(error);
+  }
+
+  res.json(user);
 }
 
 exports.signup = signup;
