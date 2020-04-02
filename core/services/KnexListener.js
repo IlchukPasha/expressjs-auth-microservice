@@ -1,21 +1,22 @@
 const now = require('performance-now');
 const KnexLogger = require('./KnexLogger');
 
-const times = {};
+const queriesTimes = {};
 
 class KnexListener {
   static query(query) {
     const uid = query.__knexQueryUid;
-    times[uid] = {
+    queriesTimes[uid] = {
       query,
       startTime: now()
     };
   }
 
-  static queryResponse(response, queryZ) {
-    const uid = queryZ.__knexQueryUid;
-    times[uid].endTime = now();
-    KnexLogger.printQueryWithTime(uid, times);
+  static queryResponse(response, query) {
+    const uid = query.__knexQueryUid;
+    queriesTimes[uid].endTime = now();
+    KnexLogger.printQueryWithTime(queriesTimes[uid]);
+    delete queriesTimes[uid];
   }
 }
 
