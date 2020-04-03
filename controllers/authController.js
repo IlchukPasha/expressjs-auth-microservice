@@ -4,8 +4,12 @@ const { UserService } = require('./../services');
 
 
 const signup = async (req, res, next) => {
-  // TODO add validation
-  const reqUser = pick(req.body, ['email', 'password', 'firstName', 'lastName']);
+  const reqUser = pick(req.body, [
+    'email',
+    'password',
+    'firstName',
+    'lastName'
+  ]);
 
   let user;
 
