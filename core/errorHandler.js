@@ -4,18 +4,18 @@ module.exports = app => {
       return next(err);
     }
 
+    res.status(err.code || 500);
+
     switch (err.name) {
       case 'HttpError':
-        res.json({ message: err.message });
+        res.json({ type: err.name, message: err.message });
         break;
       case 'ValidationError':
-        res.json({ errors: err.errors });
+        res.json({ type: err.name, errors: err.errors });
         break;
       default:
-        res.json({ message: err.message || 'An unknown error occured!' });
+        res.json({ type: 'Unknown', message: err.message || 'An unknown error occured!' });
         break;
     }
-
-    res.status(err.code || 500);
   });
 }
