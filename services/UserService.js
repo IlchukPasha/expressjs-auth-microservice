@@ -1,5 +1,6 @@
 const HttpError = require('./../core/errors/httpError');
 const { comparePassword } = require('./../core/services/Bcrypt');
+const { generateToken, verifyToken } = require('./../core/services/Jwt');
 const { User } = require('./../models');
 
 class UserService {
@@ -29,7 +30,11 @@ class UserService {
       throw new HttpError('Invalid password.', 401);
     }
 
-    // TODO generate token
+    const token = await generateToken(user);
+
+    // TODO add oauth token response
+    // TODO add eslint
+    // TODO add logger
     // TODO how to debug
     // TODO unit testing
     // TODO add mask and maybe select columns to queries
