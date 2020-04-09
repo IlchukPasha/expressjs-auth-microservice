@@ -1,4 +1,3 @@
- 
 FROM node:10.19.0-slim
 
 ENV NODE_ENV=production

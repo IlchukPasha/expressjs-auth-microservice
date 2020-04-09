@@ -30,16 +30,22 @@ class UserService {
       throw new HttpError('Invalid password.', 401);
     }
 
-    const token = await generateToken(user);
+    const accessToken = await generateToken(user);
 
     // TODO add oauth token response
+    // TODO add swagger spec 3.0, try swagger hub and swagger ui in module
     // TODO add eslint
     // TODO add logger
     // TODO how to debug
     // TODO unit testing
     // TODO add mask and maybe select columns to queries
 
-    return user;
+    return {
+      user,
+      token: {
+        accessToken
+      }
+    };
   }
 }
 
