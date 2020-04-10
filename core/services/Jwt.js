@@ -1,6 +1,6 @@
 const jsonwebtoken = require('jsonwebtoken');
 
-const HttpError = require('./../errors/httpError');
+const HttpError = require('../errors/httpError');
 
 class Jwt {
   static generateToken(user) {

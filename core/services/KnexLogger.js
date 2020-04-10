@@ -39,7 +39,7 @@ class KnexLogger {
       level: executionTime >= 100 ? 'warn' : 'info',
       message: `[${elapsedTime.toFixed(3)} ms] ${qString}`
     });
-  };
+  }
 }
 
 module.exports = KnexLogger;

@@ -57,7 +57,7 @@ const swaggerSpecv1 = swaggerJSDoc({
   ]
 });
 
-router.get('/api/v1/swagger/spec.json', (req, res, next) => {
+router.get('/api/v1/swagger/spec.json', (req, res) => {
   res.json(swaggerSpecv1);
 });
 

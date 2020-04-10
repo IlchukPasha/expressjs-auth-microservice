@@ -1,7 +1,7 @@
 const HttpError = require('./errors/httpError');
 
 module.exports = app => {
-  app.use((req, res, next) => {
+  app.use(() => {
     throw new HttpError('Route not found', 404);
   });
-}
+};

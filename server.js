@@ -22,5 +22,6 @@ routeNotFoundHandler(app);
 errorHandler(app);
 
 app.listen(process.env.PORT, () => {
+  /* eslint-disable-next-line */
   console.log(`App is listening on port ${process.env.PORT}`);
 });

@@ -1,6 +1,6 @@
 const { Model } = require('objection');
 
-const { hashPassword } = require('./../core/services/Bcrypt');
+const { hashPassword } = require('../core/services/Bcrypt');
 
 class User extends Model {
   static get tableName() {

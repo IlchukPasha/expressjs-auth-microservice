@@ -3,8 +3,10 @@ const { body } = require('express-validator');
 exports.validate = method => {
   switch (method) {
     case 'signup': {
-      return [ 
-        body('email', 'Invalid email').exists().isEmail(),
+      return [
+        body('email', 'Invalid email')
+          .exists()
+          .isEmail(),
         body('password')
           .exists().withMessage('password is required')
           .isLength({ min: 6 }).withMessage('password must be at least 6 chars long'),
@@ -14,15 +16,18 @@ exports.validate = method => {
         body('lastName')
           .exists().withMessage('Last name is required')
           .isLength({ min: 6 }).withMessage('Last name must be at least 6 chars long')
-      ]; 
+      ];
     }
     case 'signin': {
-      return [ 
-        body('email', 'Invalid email').exists().isEmail(),
+      return [
+        body('email', 'Invalid email')
+          .exists()
+          .isEmail(),
         body('password')
           .exists().withMessage('password is required')
-          .isLength({ min: 6 }).withMessage('password must be at least 6 chars long'),
-      ]; 
+          .isLength({ min: 6 }).withMessage('password must be at least 6 chars long')
+      ];
     }
+    default: return [];
   }
-}
+};

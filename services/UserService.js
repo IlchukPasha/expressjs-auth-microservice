@@ -1,7 +1,7 @@
-const HttpError = require('./../core/errors/httpError');
-const { comparePassword } = require('./../core/services/Bcrypt');
-const { generateToken, verifyToken } = require('./../core/services/Jwt');
-const { User } = require('./../models');
+const HttpError = require('../core/errors/httpError');
+const { comparePassword } = require('../core/services/Bcrypt');
+const { generateToken } = require('../core/services/Jwt');
+const { User } = require('../models');
 
 class UserService {
   static async signup(user) {
@@ -34,7 +34,6 @@ class UserService {
 
     // TODO add oauth token response
     // TODO add swagger spec 3.0, try swagger hub and swagger ui in module
-    // TODO add eslint
     // TODO add logger
     // TODO how to debug
     // TODO unit testing

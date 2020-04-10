@@ -1,6 +1,6 @@
 const { pick } = require('lodash');
 
-const { UserService } = require('./../services');
+const { UserService } = require('../services');
 
 /**
  * @swagger
@@ -52,7 +52,7 @@ const signup = async (req, res, next) => {
   }
 
   res.json(user);
-}
+};
 
 /**
  * @swagger
@@ -96,7 +96,7 @@ const signin = async (req, res, next) => {
   }
 
   res.json(data);
-}
+};
 
 exports.signup = signup;
 exports.signin = signin;
