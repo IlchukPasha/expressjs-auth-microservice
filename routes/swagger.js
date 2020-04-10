@@ -3,10 +3,12 @@ const express = require('express');
 
 const router = express.Router();
 
+// openapi 2.0  3.0 diff
+// https://github.com/OAI/OpenAPI-Specification/blob/master/examples/v2.0/yaml/petstore.yaml
+// https://github.com/OAI/OpenAPI-Specification/blob/master/examples/v3.0/petstore.yaml
+
 const swaggerSpecv1 = swaggerJSDoc({
   swaggerDefinition: {
-    // swagger: '3.0',
-    // openapi: '3.0.0',
     info: {
       title: 'Auth Microservice API',
       version: '1.0.0'
