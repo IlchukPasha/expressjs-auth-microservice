@@ -26,3 +26,6 @@ In `development or testing mode` documentation located at `{your_site_url}/docs/
 
 ## Style guide
 We use [airbnb-base](https://www.npmjs.com/package/eslint-config-airbnb-base) eslint preset
+
+## Debug in docker
+Configuration can be found here https://dev.to/alex_barashkov/how-to-debug-nodejs-in-a-docker-container-bhi

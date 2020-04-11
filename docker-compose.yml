@@ -1,6 +1,6 @@
 # https://github.com/khezen/compose-postgres
 version: '2'
-services:  
+services:
   postgres:
     image: postgres:12.2
     restart: always
@@ -24,10 +24,11 @@ services:
       - 3309:80
   node:
     build: .
-    command: /app/node_modules/.bin/nodemon ./server.js
+    command: /app/node_modules/.bin/nodemon --inspect=0.0.0.0 ./server.js
     container_name: social-network-auth-microservice.node
     ports:
       - 3000:3000
+      - 9229:9229
     volumes:
       - .:/app
     environment:

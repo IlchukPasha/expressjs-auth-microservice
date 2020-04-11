@@ -33,8 +33,6 @@ class UserService {
     const accessToken = await generateToken(user);
 
     // TODO add oauth token response
-    // TODO add logger
-    // TODO how to debug
     // TODO unit testing
     // TODO add mask and maybe select columns to queries
 

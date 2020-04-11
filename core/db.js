@@ -7,7 +7,7 @@ const { database } = require('./config');
 const knex = KnexInstance(database);
 Model.knex(knex);
 
-if (process.env.DB_QUERIES_LOG === 'true') {
+if (+process.env.DB_QUERIES_LOG) {
   knex.on('query', KnexListener.query);
   knex.on('query-response', KnexListener.queryResponse);
 }

@@ -7,6 +7,8 @@ const swaggerSpec = require('./routes/swagger');
 const errorHandler = require('./core/errorHandler');
 const routeNotFoundHandler = require('./core/routeNotFoundHandler');
 
+const logger = require('./core/services/Logger')();
+
 require('./core/db');
 
 const app = express();
@@ -22,6 +24,5 @@ routeNotFoundHandler(app);
 errorHandler(app);
 
 app.listen(process.env.PORT, () => {
-  /* eslint-disable-next-line */
-  console.log(`App is listening on port ${process.env.PORT}`);
+  logger.info(`App is listening on port ${process.env.PORT}`);
 });
