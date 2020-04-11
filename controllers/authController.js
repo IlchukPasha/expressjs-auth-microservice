@@ -1,6 +1,10 @@
+const mask = require('json-mask');
 const { pick } = require('lodash');
 
 const { UserService } = require('../services');
+
+// const ValidationError = require('../core/errors/validationError');
+// const { signinSchema, signupSchema } = require('../validators/joiAuthValidator');
 
 /**
  * @swagger
@@ -12,23 +16,11 @@ const { UserService } = require('../services');
  *      summary: Sign up
  *      description: Sign up
  *      parameters:
+ *        - $ref: "#/parameters/qFields"
  *        - in: body
  *          name: body
  *          schema:
- *            type: object
- *            properties:
- *              email:
- *                type: string
- *                default: mail@mail.com
- *              password:
- *                type: string
- *                default: "123456"
- *              firstName:
- *                type: string
- *                default: "First Name"
- *              lastName:
- *                type: string
- *                default: "Last Name"
+ *            $ref: "#/definitions/SignUp"
  *      responses:
  *        200:
  *          $ref: "#/responses/200"
@@ -43,6 +35,14 @@ const signup = async (req, res, next) => {
     'lastName'
   ]);
 
+  // await body('confirmPassword')
+  //   .equals(req.body.password).withMessage('passwords do not match')
+  //   .run(req);
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   return next(new ValidationError(errors.array()));
+  // }
+
   let user;
 
   try {
@@ -51,7 +51,9 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
-  res.json(user);
+  // instead of explicit mask can be used https://github.com/nemtsov/express-partial-response
+  res.json(mask(user, 'id,email,firstName,lastName'));
+  // res.json(user); // when converting form object to kson User model viseble is applied
 };
 
 /**
@@ -64,17 +66,11 @@ const signup = async (req, res, next) => {
  *      summary: Sign in
  *      description: Sign in via email & password
  *      parameters:
+ *        - $ref: "#/parameters/qFields"
  *        - in: body
  *          name: body
  *          schema:
- *            type: object
- *            properties:
- *              email:
- *                type: string
- *                default: mail@mail.com
- *              password:
- *                type: string
- *                default: "123456"
+ *            $ref: "#/definitions/SignIn"
  *      responses:
  *        200:
  *          $ref: "#/responses/200"
@@ -82,6 +78,16 @@ const signup = async (req, res, next) => {
  *          $ref: "#/responses/400"
  */
 const signin = async (req, res, next) => {
+  // const resValidate = signinSchema.validate(req.body, { abortEarly: false });
+  // if (resValidate.error) {
+  //   return next(new ValidationError(resValidate.error.details));
+  // }
+  // try {
+  //   await signinSchema.validateAsync(req.body, { abortEarly: false });
+  // } catch (e) {
+  //   return next(new ValidationError(e.details));
+  // }
+
   const reqData = pick(req.body, [
     'email',
     'password'
@@ -95,7 +101,7 @@ const signin = async (req, res, next) => {
     return next(error);
   }
 
-  res.json(data);
+  res.json(mask(data, 'user(id,email,firstName,lastName),token(accessToken)'));
 };
 
 exports.signup = signup;

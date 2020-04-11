@@ -21,7 +21,14 @@ const swaggerSpecv1 = swaggerJSDoc({
         name: 'x-api-token'
       }
     },
-    parameters: {},
+    parameters: {
+      qFields: {
+        in: 'query',
+        type: 'string',
+        name: 'fields',
+        description: 'Response fields'
+      }
+    },
     tags: [],
     responses: {
       200: {

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const partialResponse = require('express-partial-response');
 
 const routes = require('./routes');
 const swaggerSpec = require('./routes/swagger');
@@ -13,6 +14,7 @@ require('./core/db');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(partialResponse());
 
 routes(app);
 

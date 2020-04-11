@@ -34,7 +34,6 @@ class UserService {
 
     // TODO add oauth token response
     // TODO unit testing
-    // TODO add mask and maybe select columns to queries
 
     return {
       user,

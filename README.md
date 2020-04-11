@@ -29,3 +29,7 @@ We use [airbnb-base](https://www.npmjs.com/package/eslint-config-airbnb-base) es
 
 ## Debug in docker
 Configuration can be found here https://dev.to/alex_barashkov/how-to-debug-nodejs-in-a-docker-container-bhi
+
+## Response mask
+for express https://github.com/nemtsov/express-partial-response
+for koa https://github.com/nemtsov/koa-json-mask

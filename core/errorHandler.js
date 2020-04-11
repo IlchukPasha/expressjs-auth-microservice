@@ -1,3 +1,5 @@
+const logger = require('./services/Logger')();
+
 module.exports = app => {
   app.use((err, req, res, next) => {
     if (res.headerSent) {
@@ -17,5 +19,7 @@ module.exports = app => {
         res.json({ type: 'Unknown', message: err.message || 'An unknown error occured!' });
         break;
     }
+
+    logger.error(err);
   });
 };

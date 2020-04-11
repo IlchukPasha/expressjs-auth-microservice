@@ -5,6 +5,8 @@ help:
 	@echo "  up               Up all docker services"
 	@echo "  down             Stop all docker services"
 	@echo "  dps              Show all running containers"
+	@echo "  up-build         Build and up all running containers"
+	@echo "  docker-node-log  Log node container"
 
 # Show all running containers
 dps:
@@ -19,6 +21,8 @@ up-build:
 	docker-compose up -d --build
 	make dps
 
-# Down docker environment
 down:
 	docker stop $(shell docker ps -a -q)
+
+docker-node-log:
+	docker logs --follow social-network-auth-microservice.node
