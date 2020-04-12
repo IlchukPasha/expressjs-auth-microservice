@@ -104,5 +104,43 @@ const signin = async (req, res, next) => {
   res.json(mask(data, 'user(id,email,firstName,lastName),token(accessToken)'));
 };
 
+/**
+ * @swagger
+ * paths:
+ *  /api/oauth/token:
+ *    post:
+ *      tags:
+ *        - Authorization
+ *      summary: Get new access token
+ *      description: Get new access token
+ *      parameters:
+ *        - in: body
+ *          name: body
+ *          schema:
+ *            $ref: "#/definitions/getNewAccessToken"
+ *      responses:
+ *        200:
+ *          $ref: "#/responses/200"
+ *        400:
+ *          $ref: "#/responses/400"
+ */
+const getNewAccessToken = async (req, res, next) => {
+  const reqData = pick(req.body, [
+    'userId',
+    'refreshToken'
+  ]);
+
+  let data;
+
+  try {
+    data = await UserService.getNewAccessToken(reqData);
+  } catch (error) {
+    return next(error);
+  }
+
+  res.json(data);
+};
+
 exports.signup = signup;
 exports.signin = signin;
+exports.getNewAccessToken = getNewAccessToken;

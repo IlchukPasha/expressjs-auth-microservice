@@ -3,6 +3,8 @@ exports.up = async knex => {
     t.increments();
     t.string('email', 50).notNullable().unique();
     t.string('password').notNullable();
+    t.string('refreshToken').nullable();
+    t.integer('refreshTokenExpires').nullable();
     t.string('firstName', 100).notNullable();
     t.string('lastName', 100).notNullable();
 

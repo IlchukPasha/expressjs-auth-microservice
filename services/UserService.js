@@ -1,6 +1,10 @@
+const crypto = require('crypto');
+
 const HttpError = require('../core/errors/httpError');
-const { comparePassword } = require('../core/services/Bcrypt');
+
+const { compareData } = require('../core/services/Bcrypt');
 const { generateToken } = require('../core/services/Jwt');
+const { hashData } = require('../core/services/Bcrypt');
 const { User } = require('../models');
 
 class UserService {
@@ -20,26 +24,79 @@ class UserService {
     const { email, password } = data;
 
     const user = await User.query().where({ email }).first();
-    // const user = await User.query().findOne('email', email);
 
     if (!user) {
       throw new HttpError('Email not exists.', 401);
     }
 
-    if (!(await comparePassword(password, user.password))) {
+    if (!(await compareData(password, user.password))) {
       throw new HttpError('Invalid password.', 401);
     }
 
-    const accessToken = await generateToken(user);
+    const { token: accessToken, expiresIn } = await generateToken(user);
 
-    // TODO add oauth token response
+    const refreshToken = crypto
+      .createHash('md5')
+      .update(crypto.randomBytes(40))
+      .digest('hex');
+
+    const hashedRefreshToken = await hashData(refreshToken);
+
+    await User.query()
+      .where({ id: user.id }) // TODO try patch and see the diff
+      .update({
+        refreshToken: hashedRefreshToken,
+        refreshTokenExpires: Math.floor(Date.now() / 1000) + 2592000 // 30 days in seconds
+      });
+
     // TODO unit testing
 
     return {
       user,
       token: {
-        accessToken
+        tokenType: 'bearer',
+        accessToken,
+        expiresIn,
+        refreshToken
       }
+    };
+  }
+
+  static async getNewAccessToken(data) {
+    const { userId, refreshToken } = data;
+
+    const user = await User.query().findOne('id', userId);
+
+    if (!user) {
+      throw new HttpError('Invalid user.', 401);
+    }
+
+    if (!(await compareData(refreshToken, user.refreshToken))) {
+      throw new HttpError('Invalid refresh token.', 401);
+    }
+
+    const { token: accessToken, expiresIn } = await generateToken(user);
+
+    // TODO if refreshToken will expire soon then generate new
+    const newRefreshToken = crypto
+      .createHash('md5')
+      .update(crypto.randomBytes(40))
+      .digest('hex');
+
+    const hashedNewRefreshToken = await hashData(newRefreshToken);
+
+    await User.query()
+      .where({ id: user.id }) // TODO try patch and see the diff
+      .update({
+        refreshToken: hashedNewRefreshToken,
+        refreshTokenExpires: Math.floor(Date.now() / 1000) + 2592000 // 30 days in seconds
+      });
+
+    return {
+      tokenType: 'bearer',
+      accessToken,
+      expiresIn,
+      refreshToken: newRefreshToken
     };
   }
 }

@@ -1,7 +1,7 @@
 const { Model } = require('objection');
 const VisibilityPlugin = require('objection-visibility').default;
 
-const { hashPassword } = require('../core/services/Bcrypt');
+const { hashData } = require('../core/services/Bcrypt');
 
 class User extends VisibilityPlugin(Model) {
   static get tableName() {
@@ -14,7 +14,7 @@ class User extends VisibilityPlugin(Model) {
 
   async $beforeInsert(queryContext) {
     await super.$beforeInsert(queryContext);
-    this.password = await hashPassword(this.password);
+    this.password = await hashData(this.password);
     this.createdAt = new Date();
   }
 
@@ -65,4 +65,16 @@ module.exports = User;
  *        lastName:
  *          type: string
  *          default: "Last Name"
+ *    getNewAccessToken:
+ *      type: object
+ *      required:
+ *        - userId
+ *        - refreshToken
+ *      properties:
+ *        userId:
+ *          type: integer
+ *          default: 1
+ *        refreshToken:
+ *          type: string
+ *          default: "ffj7Yhgfkg567m786Otgh0Poi9_Ghjnfgiewjh8978Jkgfd"
  */
