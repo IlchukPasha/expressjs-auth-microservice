@@ -6,6 +6,12 @@ const { compareData } = require('../core/services/Bcrypt');
 const { generateToken } = require('../core/services/Jwt');
 const { hashData } = require('../core/services/Bcrypt');
 const { User } = require('../models');
+const {
+  app: {
+    refreshTokenExpireSeconds,
+    millisecondsInSecond
+  }
+} = require('../core/config');
 
 class UserService {
   static async signup(user) {
@@ -35,21 +41,21 @@ class UserService {
 
     const { token: accessToken, expiresIn } = await generateToken(user);
 
-    const refreshToken = crypto
-      .createHash('md5')
-      .update(crypto.randomBytes(40))
-      .digest('hex');
+    // https://github.com/ai/nanoid
+    // https://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
+    const refreshToken = await new Promise(
+      resolve => crypto.randomBytes(20, (__, buffer) => resolve(buffer.toString('hex')))
+    );
 
     const hashedRefreshToken = await hashData(refreshToken);
+    const refreshTokenExpires = Math.floor(Date.now() / millisecondsInSecond) + refreshTokenExpireSeconds;
 
     await User.query()
-      .where({ id: user.id }) // TODO try patch and see the diff
-      .update({
+      .where({ id: user.id })
+      .patch({
         refreshToken: hashedRefreshToken,
-        refreshTokenExpires: Math.floor(Date.now() / 1000) + 2592000 // 30 days in seconds
+        refreshTokenExpires
       });
-
-    // TODO unit testing
 
     return {
       user,
@@ -64,6 +70,7 @@ class UserService {
 
   static async getNewAccessToken(data) {
     const { userId, refreshToken } = data;
+    const nowInSeconds = Math.floor(Date.now() / millisecondsInSecond);
 
     const user = await User.query().findOne('id', userId);
 
@@ -75,21 +82,24 @@ class UserService {
       throw new HttpError('Invalid refresh token.', 401);
     }
 
+    if (nowInSeconds > user.refreshTokenExpires) {
+      throw new HttpError('Refresh token is expired.', 401);
+    }
+
     const { token: accessToken, expiresIn } = await generateToken(user);
 
-    // TODO if refreshToken will expire soon then generate new
-    const newRefreshToken = crypto
-      .createHash('md5')
-      .update(crypto.randomBytes(40))
-      .digest('hex');
+    const newRefreshToken = await new Promise(
+      resolve => crypto.randomBytes(20, (__, buffer) => resolve(buffer.toString('hex')))
+    );
 
     const hashedNewRefreshToken = await hashData(newRefreshToken);
+    const newRefreshTokenExpires = Math.floor(Date.now() / millisecondsInSecond) + refreshTokenExpireSeconds;
 
     await User.query()
-      .where({ id: user.id }) // TODO try patch and see the diff
-      .update({
+      .where({ id: user.id })
+      .patch({
         refreshToken: hashedNewRefreshToken,
-        refreshTokenExpires: Math.floor(Date.now() / 1000) + 2592000 // 30 days in seconds
+        refreshTokenExpires: newRefreshTokenExpires
       });
 
     return {

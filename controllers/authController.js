@@ -101,7 +101,7 @@ const signin = async (req, res, next) => {
     return next(error);
   }
 
-  res.json(mask(data, 'user(id,email,firstName,lastName),token(accessToken)'));
+  res.json(mask(data, 'user(id,email,firstName,lastName),token(tokenType,accessToken,expiresIn,refreshToken)'));
 };
 
 /**

@@ -18,7 +18,9 @@ const config = {
     }
   },
   app: {
-    jwtExpire: 86400 // 24 hours in seconds
+    jwtExpireSeconds: 86400, // 24 hours in seconds
+    refreshTokenExpireSeconds: 2592000, // 30 days in seconds
+    millisecondsInSecond: 1000
   }
 };
 

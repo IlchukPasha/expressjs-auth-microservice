@@ -46,6 +46,16 @@ exports.validate = method => {
           .isLength({ min: 6 }).withMessage('password must be at least 6 chars long')
       ];
     }
+    case 'getNewAccessToken': {
+      return [
+        body('userId')
+          .exists().withMessage('User id is required')
+          .isInt({ min: 1 }).withMessage('User id must be integer and at least 1'),
+        body('refreshToken')
+          .exists().withMessage('Refresh token is required')
+          .isLength({ min: 40, max: 40 }).withMessage('Refresh token must be 40 chars long')
+      ];
+    }
     default: return [];
   }
 };
