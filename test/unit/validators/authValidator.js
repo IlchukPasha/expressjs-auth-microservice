@@ -11,17 +11,43 @@ describe('Auth Validator', () => {
       const validateResult = validate('signin');
       validateResult.should.be.an('array').that.have.lengthOf(2);
 
-      const vr1Builder = validateResult[0].should.be.an('function')
+      validateResult[0]
+        .should.be.an('function')
         .that.have.property('builder');
-      vr1Builder.that.have.property('fields').that.include('email');
-      vr1Builder.that.have.property('locations').that.eql(['body']);
-      vr1Builder.that.have.property('message').that.equal('Invalid email');
 
-      const vr2Builder = validateResult[1].should.be.an('function')
+      validateResult[0]
+        .should.be.an('function')
+        .that.have.property('builder')
+        .that.have.property('fields').that.include('email');
+
+      validateResult[0]
+        .should.be.an('function')
+        .that.have.property('builder')
+        .that.have.property('locations').that.eql(['body']);
+
+      validateResult[0]
+        .should.be.an('function')
+        .that.have.property('builder')
+        .that.have.property('message').that.equal('Invalid email');
+
+      validateResult[1]
+        .should.be.an('function')
         .that.have.property('builder');
-      vr2Builder.that.have.property('fields').that.include('password');
-      vr2Builder.that.have.property('locations').that.eql(['body']);
-      vr2Builder.that.have.property('message').that.is.an('undefined');
+
+      validateResult[1]
+        .should.be.an('function')
+        .that.have.property('builder')
+        .that.have.property('fields').that.include('password');
+
+      validateResult[1]
+        .should.be.an('function')
+        .that.have.property('builder')
+        .that.have.property('locations').that.eql(['body']);
+
+      validateResult[1]
+        .should.be.an('function')
+        .that.have.property('builder')
+        .that.have.property('message').that.is.an('undefined');
     });
     it('should be an empty array', () => {
       const validateResult = validate('invalidValue');
