@@ -82,6 +82,33 @@ describe('User Service', () => {
       await expect(UserService.signup(user)).to.be.eventually.rejectedWith(HttpError);
     });
 
+    it('should only call the database once', async () => {
+      const userModelMock = sinon.mock(User);
+
+      // work only for one method from mock object
+      // how to work with a chain ???
+      // https://github.com/underscopeio/sinon-mongoose/issues/27   for mongodb
+      userModelMock.expects('query').withExactArgs('').once();
+      // console.log('res ', res);
+
+      UserService = proxyquire('../../../services/UserService', {
+        User: userModelMock
+      });
+
+      const user = {
+        email: 'mail@mail.com',
+        password: '123456',
+        firstName: 'First Name',
+        lastName: 'Last Name'
+      };
+
+      await UserService.signup(user);
+
+      userModelMock.verify();
+
+      userModelMock.restore();
+    });
+
     afterEach(() => {
       userModelStub.restore();
     });
