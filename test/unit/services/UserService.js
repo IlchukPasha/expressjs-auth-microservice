@@ -8,6 +8,7 @@ const { expect, assert } = require('chai');
 
 const HttpError = require('../../../core/errors/httpError');
 const { User } = require('../../../models');
+const Jwt = require('../../../core/services/Jwt');
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
@@ -19,7 +20,7 @@ describe('User Service', () => {
 
   context('signin', () => {
     let userModelStub;
-    // let userModelSpy;
+    let generateTokenSpy;
     let signin;
 
     before(() => {
@@ -47,8 +48,7 @@ describe('User Service', () => {
         password: '123456'
       };
 
-      // spy get an object and generateToken should be part(exported)
-      // userModelSpy = sinon.spy(signin, 'generateToken');
+      generateTokenSpy = sinon.spy(Jwt, 'generateToken');
 
       // cannot work with stub togather but without stub need an database connection
       // userModelSpy = sinon.spy(User, 'query');
@@ -68,14 +68,13 @@ describe('User Service', () => {
       assert(User.query().where.calledWith({ email: 'mail@mail.com' }));
       assert(User.query().where.calledWith({ id: 1 }));
 
-      // userModelSpy
-      //   .should.have.been.calledOnce();
-      // userModelSpy.restore();
+      sinon.assert.calledOnce(generateTokenSpy); // Why not work?
+      // generateTokenSpy.should.have.been.calledOnce();
+      generateTokenSpy.restore();
     });
 
     after(() => {
       userModelStub.restore();
-      // userModelSpy.restore();
     });
   });
 
