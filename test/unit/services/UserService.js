@@ -9,6 +9,7 @@ const { expect, assert } = require('chai');
 const HttpError = require('../../../core/errors/httpError');
 const { User } = require('../../../models');
 const Jwt = require('../../../core/services/Jwt');
+const Bcrypt = require('../../../core/services/Bcrypt');
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
@@ -21,6 +22,9 @@ describe('User Service', () => {
   context('signin', () => {
     let userModelStub;
     let generateTokenSpy;
+    let generateTokenStub;
+    let bcryptStub;
+    let bcryptSpy;
     let signin;
 
     before(() => {
@@ -37,8 +41,16 @@ describe('User Service', () => {
         patch: sinon.stub().resolves()
       });
 
+      // can stub const { hashData } = require('../core/services/Bcrypt'); imported functions using proxyquire
+      // otherwise must const Bcrypt = require('../core/services/Bcrypt'); Bcrypt.hashData() in tested module
+      // https://github.com/sinonjs/sinon/issues/562
+
+      // bcryptStub = sinon.stub(Bcrypt, 'hashData').resolves('fake_bcrypt_hash'); // also work well
+      bcryptSpy = sinon.spy(Bcrypt, 'hashData');
+
       ({ signin } = proxyquire('../../../services/UserService', {
-        User: userModelStub
+        User: userModelStub,
+        hashData: bcryptSpy
       }));
     });
 
@@ -48,7 +60,10 @@ describe('User Service', () => {
         password: '123456'
       };
 
+      // both works good, but if you don`t want to change method response then use spy to check method behavior
+      // cannot work togather generateTokenSpy and generateTokenStub
       generateTokenSpy = sinon.spy(Jwt, 'generateToken');
+      // generateTokenStub = sinon.stub(Jwt, 'generateToken').resolves({ token: 'fake_token', expiresIn: 123456789 });
 
       // cannot work with stub togather but without stub need an database connection
       // userModelSpy = sinon.spy(User, 'query');
@@ -68,9 +83,17 @@ describe('User Service', () => {
       assert(User.query().where.calledWith({ email: 'mail@mail.com' }));
       assert(User.query().where.calledWith({ id: 1 }));
 
-      sinon.assert.calledOnce(generateTokenSpy); // Why not work?
-      // generateTokenSpy.should.have.been.calledOnce();
+      // generateTokenSpy.should.have.been.calledOnce;
+      expect(generateTokenSpy).to.have.been.calledOnce;
+      // sinon.assert.calledOnce(generateTokenSpy);
+      // sinon.assert.calledOnce(generateTokenStub);
+      // sinon.assert.calledOnce(bcryptStub);
+      sinon.assert.calledOnce(bcryptSpy);
+
       generateTokenSpy.restore();
+      // generateTokenStub.restore();
+      // bcryptStub.restore();
+      bcryptSpy.restore();
     });
 
     after(() => {

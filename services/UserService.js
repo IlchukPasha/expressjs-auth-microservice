@@ -1,10 +1,10 @@
 const crypto = require('crypto');
 
 const HttpError = require('../core/errors/httpError');
+const Jwt = require('../core/services/Jwt');
 
-const { compareData } = require('../core/services/Bcrypt');
-const { generateToken } = require('../core/services/Jwt');
 const { hashData } = require('../core/services/Bcrypt');
+const { compareData } = require('../core/services/Bcrypt');
 const { User } = require('../models');
 const {
   app: {
@@ -39,7 +39,11 @@ class UserService {
       throw new HttpError('Invalid password.', 401);
     }
 
-    const { token: accessToken, expiresIn } = await generateToken(user);
+    // to stub this and check how function is called need to call function from object
+    // const Jwt = require('../core/services/Jwt'); Jwt.generateToken(user) - is right
+    // const { generateToken } = require('../core/services/Jwt'); generateToken(user) - is not right
+    // https://github.com/sinonjs/sinon/issues/562
+    const { token: accessToken, expiresIn } = await Jwt.generateToken(user);
 
     // https://github.com/ai/nanoid
     // https://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
@@ -47,6 +51,9 @@ class UserService {
       resolve => crypto.randomBytes(20, (__, buffer) => resolve(buffer.toString('hex')))
     );
 
+    // can test hashData imported as const { hashData } = require('../core/services/Bcrypt'); only with proxyquire
+    // otherwise must const Bcrypt = require('../core/services/Bcrypt'); Bcrypt.hashData();
+    // https://github.com/sinonjs/sinon/issues/562#issuecomment-109557931
     const hashedRefreshToken = await hashData(refreshToken);
     const refreshTokenExpires = Math.floor(Date.now() / millisecondsInSecond) + refreshTokenExpireSeconds;
 
@@ -86,7 +93,7 @@ class UserService {
       throw new HttpError('Refresh token is expired.', 401);
     }
 
-    const { token: accessToken, expiresIn } = await generateToken(user);
+    const { token: accessToken, expiresIn } = await Jwt.generateToken(user);
 
     const newRefreshToken = await new Promise(
       resolve => crypto.randomBytes(20, (__, buffer) => resolve(buffer.toString('hex')))

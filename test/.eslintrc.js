@@ -6,6 +6,7 @@ module.exports = {
     "no-unused-vars": [
       "error",
       { "varsIgnorePattern": "should|expect" }
-    ]
+    ],
+    "no-unused-expressions": 'off'
   }
 }
